@@ -1,26 +1,414 @@
-// Dashboard.jsx
-import React, { useEffect, useState } from "react";
-import { FaSearch, FaPlus, FaUserCircle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import oncoLogo from "./assets/logoReport.png"; // ✅ PNG logo
-import Lottie from "lottie-react";
-import heroAnimation from "./assets/doctor.json"; // ✅ Download any Lottie animation from lottiefiles.com
-import AOS from "aos";
-import "aos/dist/aos.css";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  FaSearch,
+  FaPlus,
+  FaUserMd,
+  FaChartLine,
+  FaMicroscope,
+  FaClock,
+  FaArrowRight,
+} from 'react-icons/fa';
+import Lottie from 'lottie-react';
+import DoctorAnimation from './assets/Doctor.json';
+import HeroImage from './assets/Gemini_Generated_Image_g5p0prg5p0prg5p0-removebg-preview.webp';
+
+const OncoCodeLogo = () => (
+  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+    <path d="M45 5C22.9086 5 5 22.9086 5 45H45V5Z" stroke="#0f4c81" strokeWidth="6" />
+    <path d="M55 5H95V45H55V5Z" stroke="#0f4c81" strokeWidth="6" />
+    <path d="M5 55H45V95H5V55Z" stroke="#0f4c81" strokeWidth="6" />
+    <path d="M55 95C77.0914 95 95 77.0914 95 55H55V95Z" stroke="#0f4c81" strokeWidth="6" />
+  </svg>
+);
+
+const DashboardStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+  :root {
+    --brand-900: #0f2f4f;
+    --brand-800: #0f4c81;
+    --brand-700: #146c94;
+    --aqua: #00bcd4;
+    --mint: #73d7c4;
+    --ink: #0e1e2c;
+    --soft-ink: #5a6f83;
+    --surface: #f5f9fd;
+    --line: #d7e3ef;
+  }
+
+  * { box-sizing: border-box; }
+
+  body, html, #root {
+    margin: 0;
+    min-height: 100%;
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, #edf6ff 0%, #f9fcff 45%, #eefbf8 100%);
+  }
+
+  #dashboard-page { min-height: 100vh; }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,255,255,0.86);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15, 76, 129, 0.12);
+  }
+
+  .topbar-inner {
+    width: min(1180px, 100% - 32px);
+    margin: 0 auto;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand strong {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+    color: var(--brand-800);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: #344c63;
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background: var(--aqua);
+    transition: width 180ms ease;
+  }
+
+  .nav-links a:hover::after { width: 100%; }
+
+  .hero {
+    width: min(1180px, 100% - 32px);
+    margin: 24px auto 0;
+    border-radius: 26px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: linear-gradient(135deg, var(--brand-900) 0%, var(--brand-800) 56%, #1188b8 100%);
+    color: #e8f6ff;
+    box-shadow: 0 26px 64px rgba(15, 47, 79, 0.28);
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.15) 1.2px, transparent 1.2px);
+    background-size: 18px 18px;
+    opacity: 0.2;
+  }
+
+  .hero-left,
+  .hero-right {
+    position: relative;
+    z-index: 2;
+    padding: 38px;
+  }
+
+  .hero-title {
+    margin: 0 0 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(2rem, 3.3vw, 3rem);
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-sub {
+    margin: 0;
+    font-size: 1.05rem;
+    max-width: 500px;
+    opacity: 0.9;
+  }
+
+  .hero-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hero-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-btn.primary {
+    background: #ffffff;
+    color: var(--brand-800);
+    box-shadow: 0 8px 22px rgba(255,255,255,0.26);
+  }
+
+  .hero-btn.secondary {
+    background: rgba(255,255,255,0.12);
+    color: #eff9ff;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+
+  .hero-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .hero-media {
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 10px;
+  }
+
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    animation: bob 7s ease-in-out infinite;
+  }
+
+  .hero-lottie {
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    display: grid;
+    place-items: center;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .main-wrap {
+    width: min(1180px, 100% - 32px);
+    margin: 26px auto 34px;
+    display: grid;
+    gap: 24px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 22px rgba(14, 30, 44, 0.05);
+    animation: fadeRise 480ms ease both;
+  }
+
+  .kpi-card:nth-child(2) { animation-delay: 120ms; }
+  .kpi-card:nth-child(3) { animation-delay: 240ms; }
+
+  @keyframes fadeRise {
+    from { transform: translateY(14px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .kpi-title {
+    font-size: 0.9rem;
+    color: var(--soft-ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .kpi-value {
+    margin-top: 6px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--brand-900);
+    letter-spacing: -0.04em;
+  }
+
+  .kpi-note {
+    color: #3f5e74;
+    font-size: 0.9rem;
+  }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 22px rgba(14, 30, 44, 0.05);
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .panel-head h3 {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .panel-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .item-row {
+    border: 1px solid #e6edf5;
+    border-radius: 12px;
+    padding: 12px;
+    background: #f9fcff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: 180ms ease;
+  }
+
+  .item-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(14, 30, 44, 0.08);
+  }
+
+  .item-main {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .item-icon {
+    color: #fff;
+    background: linear-gradient(140deg, var(--brand-800), #0c6f94);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .item-text strong {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 210px;
+  }
+
+  .item-text span,
+  .item-meta {
+    color: var(--soft-ink);
+    font-size: 0.86rem;
+  }
+
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .quick-card {
+    border-radius: 14px;
+    border: 1px solid #dbe7f3;
+    background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
+    padding: 16px;
+    cursor: pointer;
+    transition: 180ms ease;
+  }
+
+  .quick-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 18px rgba(14, 30, 44, 0.08);
+  }
+
+  .quick-card h4 {
+    margin: 0 0 4px;
+    font-family: 'Manrope', sans-serif;
+    color: var(--brand-900);
+  }
+
+  .quick-card p {
+    margin: 0;
+    color: var(--soft-ink);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; }
+    .section-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 760px) {
+    .topbar-inner { min-height: 64px; }
+    .nav-links { gap: 14px; font-size: 0.9rem; }
+    .hero-left, .hero-right { padding: 24px; }
+    .hero-media { grid-template-columns: 1fr; }
+    .hero-lottie { min-height: 120px; }
+    .kpi-grid { grid-template-columns: 1fr; }
+    .quick-actions { grid-template-columns: 1fr; }
+  }
+`;
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const doctorId = localStorage.getItem("doctorId");
-  const token = localStorage.getItem("token");
+  const doctorId = localStorage.getItem('doctorId');
+  const token = localStorage.getItem('token');
 
   const [totalPatients, setTotalPatients] = useState(0);
   const [pendingClassification, setPendingClassification] = useState(0);
   const [recentReports, setRecentReports] = useState([]);
   const [recentPatients, setRecentPatients] = useState([]);
-
-  useEffect(() => {
-    AOS.init({ duration: 1200, once: true });
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,10 +419,9 @@ const Dashboard = () => {
         const patients = await patientRes.json();
         setTotalPatients(patients.length);
 
-        const analysisRes = await fetch(
-          `http://localhost:5000/api/analysis/all?doctorId=${doctorId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const analysisRes = await fetch(`http://localhost:5000/api/analysis/all?doctorId=${doctorId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const analyses = await analysisRes.json();
 
         if (!Array.isArray(analyses)) {
@@ -49,400 +436,144 @@ const Dashboard = () => {
         setRecentReports(analyses.slice(-5).reverse());
         setRecentPatients(patients.slice(0, 5));
       } catch (err) {
-        console.error("Dashboard fetch error:", err);
+        console.error('Dashboard fetch error:', err);
       }
     };
+
     if (doctorId) fetchData();
   }, [doctorId, token]);
 
   return (
     <>
-      <style>{`
-        body, html, #root {
-          margin: 0;
-          padding: 0;
-          font-family: 'Segoe UI', sans-serif;
-          scroll-behavior: smooth;
-          background: #f7f3ff;
-        }
-
-        /* --- FIXED HEADER --- */
-        .fixed-header {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          background: rgba(255, 255, 255, 0.97);
-          backdrop-filter: blur(10px);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 12px 60px;
-          z-index: 10;
-          box-shadow: 0 2px 12px rgba(147, 51, 234, 0.1);
-          animation: slideDown 1s ease forwards;
-        }
-
-        @keyframes slideDown {
-          from { transform: translateY(-50px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-
-        .header-left {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .header-logo {
-          width: 55px;
-          height: auto;
-          animation: slideInLeft 1.2s ease forwards;
-        }
-
-        @keyframes slideInLeft {
-          from { transform: translateX(-80px); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-
-        .header-title {
-          font-weight: 700;
-          font-size: 1.3rem;
-          background: linear-gradient(90deg, #d26cfc, #8b5cf6);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        /* --- NAVIGATION --- */
-        .nav-links {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          gap: 40px;
-          flex-shrink: 0;
-        }
-
-        .nav-links a {
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 1rem;
-          color: #4b1f8c;
-          transition: all 0.3s ease;
-          position: relative;
-        }
-
-        .nav-links a::after {
-          content: "";
-          position: absolute;
-          left: 0;
-          bottom: -4px;
-          width: 0%;
-          height: 2px;
-          background: #8b5cf6;
-          transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
-          width: 100%;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-          color: #8b5cf6;
-        }
-
-        /* --- HERO SECTION --- */
-        .hero-section {
-          min-height: 100vh;
-          background: linear-gradient(120deg, #8b5cf6, #ec4899);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: left;
-          padding: 0 80px;
-          margin-top: 70px; /* offset for header */
-          overflow: hidden;
-        }
-
-        .hero-inner {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          max-width: 1400px;
-          width: 100%;
-          gap: 80px;
-        }
-
-        .hero-text {
-          flex: 1;
-          animation: slideInRight 1.2s ease forwards;
-        }
-
-        @keyframes slideInRight {
-          from { transform: translateX(80px); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-
-        .hero-text h1 {
-          font-size: 3.2rem;
-          font-weight: 700;
-          margin-bottom: 20px;
-        }
-
-        .hero-text p {
-          font-size: 1.2rem;
-          opacity: 0.9;
-          margin-bottom: 30px;
-        }
-
-        .hero-animation {
-          flex: 1;
-          width: 450px;
-          will-change: transform;
-          transform: translateZ(0);
-          animation: floatAnimation 6s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatAnimation {
-          from { transform: translateY(0) scale(1); }
-          to { transform: translateY(-10px) scale(1.02); }
-        }
-
-        .scroll-down {
-          position: absolute;
-          bottom: 40px;
-          font-size: 1.1rem;
-          animation: bounce 2s infinite;
-          cursor: pointer;
-          color: #fff;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(8px); }
-        }
-
-        /* --- DASHBOARD CONTENT --- */
-        .dashboard-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          background: #ffffff;
-          border-radius: 30px 30px 0 0;
-          box-shadow: 0 -5px 30px rgba(147, 51, 234, 0.08);
-          padding: 70px 50px;
-        }
-
-        section {
-          margin-bottom: 50px;
-        }
-
-        h2 {
-          color: #5b21b6;
-          margin-bottom: 15px;
-        }
-
-        .stats-container {
-          display: flex;
-          gap: 25px;
-          flex-wrap: wrap;
-        }
-
-        .stat-card {
-          flex: 1;
-          background: #faf9ff;
-          border: 1px solid #e5d4ff;
-          border-radius: 16px;
-          padding: 25px;
-          text-align: center;
-          box-shadow: 0 4px 10px rgba(155, 92, 246, 0.15);
-          transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-          transform: translateY(-5px);
-        }
-
-        .value {
-          font-size: 2.4rem;
-          font-weight: 700;
-          color: #5b21b6;
-        }
-
-        .label {
-          font-size: 1rem;
-          color: #555;
-        }
-
-        .actions-container {
-          display: flex;
-          justify-content: center;
-          gap: 20px;
-        }
-
-        .action-btn {
-          background: linear-gradient(90deg, #8b5cf6, #ec4899);
-          border: none;
-          border-radius: 10px;
-          color: white;
-          padding: 14px 28px;
-          font-weight: 600;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3);
-          transition: all 0.3s;
-        }
-
-        .action-btn:hover {
-          transform: translateY(-3px);
-        }
-
-        .reports-activity-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 30px;
-        }
-
-        .report-item, .activity-item {
-          padding: 14px;
-          border-radius: 10px;
-          background: #f8f6ff;
-          border: 1px solid #e9d5ff;
-          box-shadow: 0 3px 10px rgba(155, 92, 246, 0.08);
-        }
-
-        .patient-info {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .patient-name {
-          font-weight: 600;
-          color: #2d155a;
-        }
-
-        .patient-subtext {
-          font-size: 0.9rem;
-          color: #6b21a8;
-        }
-
-        .patient-codes {
-          text-align: right;
-          color: #4c1d95;
-          font-size: 0.9rem;
-          font-weight: 500;
-        }
-      `}</style>
-
+      <style>{DashboardStyles}</style>
       <div id="dashboard-page">
-        {/* FIXED HEADER */}
-        <div className="fixed-header">
-          <div className="header-left">
-            <img src={oncoLogo} alt="OncoDecode Logo" className="header-logo" />
-            <span className="header-title">OncoDecode</span>
+        <header className="topbar">
+          <div className="topbar-inner">
+            <Link className="brand" to="/dashboard">
+              <OncoCodeLogo />
+              <strong>OncoCode</strong>
+            </Link>
+            <nav className="nav-links">
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/search_patient">Patients</Link>
+              <Link to="/add_patient">New Case</Link>
+              <Link to="/login">Logout</Link>
+            </nav>
           </div>
+        </header>
 
-          <nav className="nav-links">
-            <a href="#" className="active">Home</a>
-            <a href="/analysis">Analysis</a>
-            <a href="/login">Logout</a>
-          </nav>
-        </div>
-
-        {/* HERO SECTION */}
-        <section className="hero-section">
-          <div className="hero-inner">
-            <Lottie animationData={heroAnimation} loop autoplay className="hero-animation" />
-            <div className="hero-text">
-              <h1>Welcome to OncoDecode</h1>
-              <p>Empowering Doctors with AI-driven Cancer Analysis</p>
+        <section className="hero">
+          <div className="hero-left">
+            <h1 className="hero-title">Clinical Intelligence Center</h1>
+            <p className="hero-sub">
+              Coordinate records, upload gene data, and review AI-based oncology insights from a single professional dashboard.
+            </p>
+            <div className="hero-actions">
+              <button className="hero-btn primary" onClick={() => navigate('/search_patient')}>
+                <FaSearch /> Search Patients
+              </button>
+              <button className="hero-btn secondary" onClick={() => navigate('/add_patient')}>
+                <FaPlus /> Add New Patient
+              </button>
             </div>
           </div>
 
-          <div
-            className="scroll-down"
-            onClick={() =>
-              document.getElementById("dashboard-main").scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            ↓ Scroll Down
+          <div className="hero-right">
+            <div className="hero-media">
+              <img src={HeroImage} alt="Medical analytics dashboard visual" />
+              <div className="hero-lottie">
+                <Lottie animationData={DoctorAnimation} loop style={{ width: '100%', maxWidth: 150 }} />
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* DASHBOARD CONTENT */}
-        <div id="dashboard-main" className="dashboard-container">
-          {/* Overview */}
-          <section data-aos="fade-up">
-            <h2>Overview</h2>
-            <div className="stats-container">
-              <div className="stat-card">
-                <div className="value">{totalPatients}</div>
-                <div className="label">Total Patients</div>
-              </div>
-              <div className="stat-card">
-                <div className="value">{pendingClassification}</div>
-                <div className="label">Pending Classifications</div>
-              </div>
-            </div>
+        <main className="main-wrap">
+          <section className="kpi-grid">
+            <article className="kpi-card">
+              <div className="kpi-title"><FaUserMd /> Total Patients</div>
+              <div className="kpi-value">{totalPatients}</div>
+              <div className="kpi-note">Active records under your profile</div>
+            </article>
+            <article className="kpi-card">
+              <div className="kpi-title"><FaClock /> Pending Classifications</div>
+              <div className="kpi-value">{pendingClassification}</div>
+              <div className="kpi-note">Awaiting gene upload or model output</div>
+            </article>
+            <article className="kpi-card">
+              <div className="kpi-title"><FaChartLine /> Reports Generated</div>
+              <div className="kpi-value">{recentReports.length}</div>
+              <div className="kpi-note">Recent clinical outputs available</div>
+            </article>
           </section>
 
-          {/* Main Actions */}
-          <section data-aos="fade-up">
-            <h2>Main Actions</h2>
-            <div className="actions-container">
-              <button className="action-btn" onClick={() => navigate("/search_patient")}>
-                <FaSearch /> Search Patient
-              </button>
-              <button className="action-btn" onClick={() => navigate("/add_patient")}>
-                <FaPlus /> Add Patient
-              </button>
-            </div>
+          <section className="quick-actions">
+            <button className="quick-card" onClick={() => navigate('/search_patient')}>
+              <h4>Patient Directory</h4>
+              <p>Find records quickly and open details instantly.</p>
+            </button>
+            <button className="quick-card" onClick={() => navigate('/add_patient')}>
+              <h4>Register New Case</h4>
+              <p>Create structured patient entries with complete history.</p>
+            </button>
           </section>
 
-          {/* Recent Reports + Activity */}
-          <section className="reports-activity-grid" data-aos="fade-up">
-            <div>
-              <h2>Recent Reports</h2>
-              {recentReports.length > 0 ? (
-                recentReports.map((r, i) => (
-                  <div key={i} className="report-item">
-                    <strong>{r.CancerType}</strong> – {r.Stage} ({r.SurvivalInterpretation})
-                  </div>
-                ))
-              ) : (
-                <p>No recent reports.</p>
-              )}
-            </div>
+          <section className="section-grid">
+            <article className="panel">
+              <div className="panel-head">
+                <h3>Recent Reports</h3>
+                <FaMicroscope color="#146c94" />
+              </div>
 
-            <div>
-              <h2>Recent Activity</h2>
-              {recentPatients.length > 0 ? (
-                recentPatients.map((p) => (
-                  <div key={p._id} className="activity-item">
-                    <div className="patient-info">
-                      <FaUserCircle style={{ fontSize: "32px", color: "#8b5cf6" }} />
-                      <div>
-                        <div className="patient-name">{p.fullName}</div>
-                        <div className="patient-subtext">{p.patientId}</div>
+              <div className="panel-list">
+                {recentReports.length > 0 ? (
+                  recentReports.map((r, i) => (
+                    <div key={i} className="item-row">
+                      <div className="item-main">
+                        <span className="item-icon"><FaUserMd /></span>
+                        <div className="item-text">
+                          <strong>{r.CancerType}</strong>
+                          <span>Patient ID: {r.patientId}</span>
+                        </div>
+                      </div>
+                      <div className="item-meta">
+                        {r.Stage} <FaArrowRight />
                       </div>
                     </div>
-                    <div className="patient-codes">
-                      {new Date(p.createdAt).toLocaleDateString()}
+                  ))
+                ) : (
+                  <p className="item-meta">No recent reports.</p>
+                )}
+              </div>
+            </article>
+
+            <article className="panel">
+              <div className="panel-head">
+                <h3>Recent Patients</h3>
+                <FaUserMd color="#146c94" />
+              </div>
+
+              <div className="panel-list">
+                {recentPatients.length > 0 ? (
+                  recentPatients.map((p) => (
+                    <div key={p._id} className="item-row" onClick={() => navigate(`/patient/${p._id}`)}>
+                      <div className="item-main">
+                        <span className="item-icon"><FaUserMd /></span>
+                        <div className="item-text">
+                          <strong>{p.fullName}</strong>
+                          <span>{p.patientId}</span>
+                        </div>
+                      </div>
+                      <div className="item-meta">Age {p.age || 'N/A'}</div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <p>No recent patients.</p>
-              )}
-            </div>
+                  ))
+                ) : (
+                  <p className="item-meta">No recent patients.</p>
+                )}
+              </div>
+            </article>
           </section>
-        </div>
+        </main>
       </div>
     </>
   );

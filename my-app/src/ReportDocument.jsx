@@ -7,30 +7,31 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import logo from "./assets/logoReport.png"; // ✅ Ensure this is a PNG or JPG
+import logo from "./assets/logoReport.png";
 
 // ===================== STYLES =====================
 const styles = StyleSheet.create({
   page: {
     paddingTop: 100,
-    paddingHorizontal: 40,
-    paddingBottom: 60,
+    paddingHorizontal: 50,
+    paddingBottom: 80,
     fontFamily: "Helvetica",
     backgroundColor: "#FFFFFF",
   },
 
-  // --- Header (Professional Letterhead) ---
+  // --- Header ---
   header: {
     position: "absolute",
-    top: 18,
-    left: 36,
-    right: 36,
+    top: 20,
+    left: 50,
+    right: 50,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#d4d4d4",
-    paddingBottom: 10,
+    borderBottomWidth: 2,
+    borderBottomColor: "#E2E8F0",
+    paddingBottom: 15,
+    marginBottom: 20,
   },
   headerLeft: {
     flex: 1,
@@ -40,122 +41,199 @@ const styles = StyleSheet.create({
     flex: 2,
     alignItems: "center",
     justifyContent: "center",
-    // ensure center has enough horizontal space
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
   },
   headerRight: {
     flex: 1,
     alignItems: "flex-end",
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     objectFit: "contain",
   },
-  // slightly smaller title so it fits on one line consistently
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: "Helvetica-Bold",
     color: "#1E3A8A",
     textAlign: "center",
+    letterSpacing: 0.5,
   },
   headerSubtitle: {
-    fontSize: 9,
-    color: "#6B7280",
-    marginTop: 2,
+    fontSize: 10,
+    color: "#64748B",
+    marginTop: 4,
     textAlign: "center",
   },
   headerDate: {
     fontSize: 10,
-    color: "#6B7280",
+    color: "#64748B",
+    textAlign: "right",
+  },
+
+  // --- Report Title ---
+  reportTitle: {
+    fontSize: 24,
+    fontFamily: "Helvetica-Bold",
+    color: "#0F172A",
+    textAlign: "center",
+    marginTop: 30,
+    marginBottom: 10,
+    letterSpacing: -0.5,
+  },
+  reportSubtitle: {
+    fontSize: 12,
+    color: "#64748B",
+    textAlign: "center",
+    marginBottom: 40,
   },
 
   // --- Section Titles ---
   section: {
-    marginBottom: 20,
+    marginBottom: 30,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "Helvetica-Bold",
     color: "#1E3A8A",
-    marginBottom: 6,
-    borderBottomWidth: 0.8,
-    borderBottomColor: "#E5E7EB",
-    paddingBottom: 3,
+    marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E2E8F0",
+    paddingBottom: 6,
+    backgroundColor: "#F8FAFC",
+    padding: 8,
+    borderRadius: 4,
   },
 
   // --- Patient Details ---
   patientDetails: {
-    marginTop: 10,
-    marginBottom: 25,
+    marginTop: 15,
+    marginBottom: 30,
+    backgroundColor: "#F8FAFC",
+    padding: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 6,
+    marginBottom: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F1F5F9",
   },
   detailLabel: {
-    width: "40%",
-    fontSize: 11,
-    color: "#4B5563",
+    width: "35%",
+    fontSize: 12,
+    color: "#64748B",
+    fontFamily: "Helvetica-Bold",
   },
   detailValue: {
-    width: "60%",
-    fontSize: 11,
-    color: "#111827",
+    width: "65%",
+    fontSize: 12,
+    color: "#0F172A",
     textAlign: "right",
     fontFamily: "Helvetica-Bold",
   },
 
   // --- Results Section ---
+  resultsSection: {
+    backgroundColor: "#F0FDF4",
+    padding: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#86EFAC",
+    marginTop: 15,
+  },
   resultItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#DCFCE7",
   },
   resultLabel: {
-    fontSize: 11,
-    color: "#4B5563",
-  },
-  resultValue: {
+    width: "40%",
     fontSize: 12,
-    color: "#1D4ED8",
+    color: "#166534",
     fontFamily: "Helvetica-Bold",
   },
-
-  // --- Doctor Signature ---
-  signatureSection: {
-    marginTop: 40,
+  resultValue: {
+    width: "60%",
+    fontSize: 13,
+    color: "#0F172A",
     textAlign: "right",
+    fontFamily: "Helvetica-Bold",
+    backgroundColor: "#FFFFFF",
+    padding: 6,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#D1FAE5",
+  },
+
+  // --- Notes ---
+  notesSection: {
+    marginTop: 30,
+    padding: 15,
+    backgroundColor: "#FEF3C7",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#FCD34D",
+  },
+  notesTitle: {
+    fontSize: 12,
+    fontFamily: "Helvetica-Bold",
+    color: "#92400E",
+    marginBottom: 8,
+  },
+  notesText: {
+    fontSize: 10,
+    color: "#78350F",
+    lineHeight: 1.4,
+  },
+
+  // --- Signature ---
+  signatureSection: {
+    marginTop: 50,
+    textAlign: "right",
+    paddingRight: 50,
   },
   signatureLine: {
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    width: 150,
+    width: 180,
     alignSelf: "flex-end",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   signatureText: {
-    fontSize: 10,
+    fontSize: 11,
     color: "#374151",
+    fontFamily: "Helvetica-Bold",
+  },
+  signatureTitle: {
+    fontSize: 10,
+    color: "#6B7280",
+    marginBottom: 4,
   },
 
   // --- Footer ---
   footer: {
     position: "absolute",
-    bottom: 25,
-    left: 40,
-    right: 40,
+    bottom: 30,
+    left: 50,
+    right: 50,
     borderTopWidth: 1,
-    borderTopColor: "#D1D5DB",
-    paddingTop: 6,
+    borderTopColor: "#E2E8F0",
+    paddingTop: 10,
     textAlign: "center",
     fontSize: 9,
-    color: "#6B7280",
+    color: "#64748B",
   },
   pageNumber: {
     position: "absolute",
-    bottom: 25,
+    bottom: 30,
     right: 50,
     fontSize: 9,
     color: "#9CA3AF",
@@ -164,35 +242,42 @@ const styles = StyleSheet.create({
 
 // ===================== COMPONENT =====================
 const ReportDocument = ({ patient, results }) => {
-  const currentDate = new Date().toLocaleDateString();
-
-  // use non-breaking spaces to prevent title wrapping
-  const title = "OncoDecode\u00A0Prediction\u00A0Report";
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* ---------- HEADER ---------- */}
+        {/* HEADER */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <Image style={styles.logo} src={logo} />
           </View>
 
           <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>{title}</Text>
+            <Text style={styles.headerTitle}>OncoCode</Text>
             <Text style={styles.headerSubtitle}>
-              AI-based Cancer Type, Stage & Survival Prediction System
+              Precision Oncology, Simplified
             </Text>
           </View>
 
           <View style={styles.headerRight}>
-            <Text style={styles.headerDate}>Generated on: {currentDate}</Text>
+            <Text style={styles.headerDate}>{currentDate}</Text>
           </View>
         </View>
 
-        {/* ---------- PATIENT DETAILS ---------- */}
+        {/* TITLE */}
+        <Text style={styles.reportTitle}>AI Cancer Prediction Report</Text>
+        <Text style={styles.reportSubtitle}>
+          Comprehensive Analysis & Risk Assessment
+        </Text>
+
+        {/* PATIENT DETAILS */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Patient Summary</Text>
+          <Text style={styles.sectionTitle}>Patient Information</Text>
           <View style={styles.patientDetails}>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Patient Name</Text>
@@ -208,55 +293,75 @@ const ReportDocument = ({ patient, results }) => {
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Age</Text>
-              <Text style={styles.detailValue}>{patient?.age || "N/A"}</Text>
+              <Text style={styles.detailValue}>
+                {patient?.age || "N/A"} years
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Gender</Text>
-              <Text style={styles.detailValue}>{patient?.gender || "N/A"}</Text>
+              <Text style={styles.detailValue}>
+                {patient?.gender || "N/A"}
+              </Text>
             </View>
           </View>
         </View>
 
-        {/* ---------- PREDICTION RESULTS ---------- */}
+        {/* RESULTS */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Prediction Results</Text>
-          <View style={{ marginTop: 10 }}>
+          <Text style={styles.sectionTitle}>AI Prediction Results</Text>
+          <View style={styles.resultsSection}>
             <View style={styles.resultItem}>
-              <Text style={styles.resultLabel}>Predicted Cancer Type</Text>
+              <Text style={styles.resultLabel}>Cancer Type</Text>
               <Text style={styles.resultValue}>
                 {results?.CancerType || "N/A"}
               </Text>
             </View>
             <View style={styles.resultItem}>
-              <Text style={styles.resultLabel}>Predicted Stage</Text>
+              <Text style={styles.resultLabel}>Disease Stage</Text>
               <Text style={styles.resultValue}>
                 {results?.Stage || "N/A"}
               </Text>
             </View>
             <View style={styles.resultItem}>
-              <Text style={styles.resultLabel}>Survival Interpretation</Text>
+              <Text style={styles.resultLabel}>Survival Risk</Text>
               <Text style={styles.resultValue}>
                 {results?.SurvivalInterpretation || "N/A"}
               </Text>
             </View>
             <View style={styles.resultItem}>
-              <Text style={styles.resultLabel}>Survival Risk Score</Text>
+              <Text style={styles.resultLabel}>Risk Score</Text>
               <Text style={styles.resultValue}>
                 {results?.SurvivalRiskScore !== undefined
-                  ? results.SurvivalRiskScore.toFixed(3)
+                  ? `${(results.SurvivalRiskScore * 100).toFixed(1)}%`
                   : "N/A"}
               </Text>
             </View>
           </View>
         </View>
 
-        {/* ---------- DOCTOR SIGNATURE ---------- */}
-        <View style={styles.signatureSection}>
-          <View style={styles.signatureLine} />
-          <Text style={styles.signatureText}>Doctor’s Signature</Text>
+        {/* DISCLAIMER */}
+        <View style={styles.notesSection}>
+          <Text style={styles.notesTitle}>⚠ Important Medical Disclaimer</Text>
+          <Text style={styles.notesText}>
+            This AI-generated report is for informational purposes only and
+            should not replace professional medical advice, diagnosis, or
+            treatment. All predictions are based on machine learning models and
+            should be validated by qualified healthcare professionals.
+          </Text>
         </View>
 
-        {/* ---------- FOOTER ---------- */}
+        {/* SIGNATURE */}
+        <View style={styles.signatureSection}>
+          <Text style={styles.signatureTitle}>
+            Authorized Healthcare Professional
+          </Text>
+          <View style={styles.signatureLine} />
+          <Text style={styles.signatureText}>
+            Digital Signature & Validation
+          </Text>
+        </View>
+
+        {/* FOOTER */}
         <Text
           style={styles.pageNumber}
           render={({ pageNumber, totalPages }) =>
@@ -265,7 +370,8 @@ const ReportDocument = ({ patient, results }) => {
         />
         <View style={styles.footer}>
           <Text>
-            ⚠️ Confidential Medical Report. For authorized personnel only.
+            Confidential Medical Report • OncoCode AI System • Generated{" "}
+            {currentDate}
           </Text>
         </View>
       </Page>

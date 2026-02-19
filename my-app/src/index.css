@@ -1,18 +1,31 @@
-/* src/index.css */
-
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
   margin: 0;
-  /* The conflicting flex styles have been removed. */
-  /* This allows our component styles to take full control. */
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a,
+button {
+  font-family: inherit;
 }
